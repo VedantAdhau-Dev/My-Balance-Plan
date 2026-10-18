@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#e8edf4">
+<title>My Balance Plan</title>
+<style>
+:root{
+ --bg:#f5f7fa;--surface:#ffffff;--text:#273449;--muted:#748096;
+ --accent:#4778bd;--accent-soft:#eaf1fb;--line:#e2e7ef;
+ --shadow-out:0 2px 8px rgba(30,48,75,.045);
+ --shadow-in:none;
+ --radius:16px;
+}
+[data-theme="dark"]{
+ --bg:#171e29;--surface:#202a38;--text:#e2e8f0;--muted:#9ba8bb;
+ --accent:#8eb5ef;--accent-soft:#293b54;--line:#303b4b;
+ --shadow-out:0 2px 8px rgba(0,0,0,.12);
+ --shadow-in:none;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;letter-spacing:-.01em}
+button,input,textarea{font:inherit}
+button,label{ -webkit-tap-highlight-color:transparent}
+button{cursor:pointer;color:inherit}
+.app{width:min(100%,960px);margin:0 auto;padding:24px 22px 42px}
+header{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:22px}
+.brand{min-width:0}
+.kicker{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:750}
+h1{font-size:25px;letter-spacing:-.055em;line-height:1.2;margin:4px 0 0;font-weight:750}
+.actions{display:flex;gap:8px;flex-shrink:0}
+button,.button{border:1px solid var(--line);background:var(--surface);box-shadow:none;border-radius:10px;padding:10px 13px;font-size:12px;font-weight:700;transition:background .15s,border-color .15s,transform .15s}
+button:active,.button:active{background:var(--accent-soft);transform:translateY(1px)}
+button:focus-visible,.button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.primary{background:var(--accent);color:white;border-color:var(--accent);box-shadow:none}
+[data-theme="dark"] .primary{color:#172234;box-shadow:none}
+.hero{display:grid;grid-template-columns:1fr 180px;gap:20px;align-items:center;padding:25px;border-radius:18px;box-shadow:none;border:1px solid var(--line);margin-bottom:17px}
+.hero h2{font-size:clamp(22px,3vw,30px);line-height:1.17;letter-spacing:-.05em;margin:8px 0 9px;max-width:500px}
+.hero p{margin:0;color:var(--muted);font-size:13px;max-width:520px}
+.progress-card{padding:15px;border-radius:16px;box-shadow:var(--shadow-in)}
+.progress-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:750}
+.progress-numbers{font-size:28px;font-weight:800;letter-spacing:-.06em;margin:3px 0 8px}
+.progress-numbers span{font-size:14px;color:var(--muted);font-weight:600}
+.track{height:6px;border-radius:20px;background:var(--line);overflow:hidden}
+.track span{display:block;height:100%;width:0;background:var(--accent);border-radius:20px;transition:width .2s}
+.progress-copy{font-size:11px;color:var(--muted);margin-top:8px}
+.overview{display:grid;grid-template-columns:1.15fr .85fr;gap:17px}
+.panel{padding:19px;border-radius:var(--radius);box-shadow:none;border:1px solid var(--line);min-width:0}
+.panel-title{font-size:16px;font-weight:750;letter-spacing:-.03em;margin:0}
+.panel-desc{font-size:12px;color:var(--muted);margin:4px 0 14px}
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:13px 0}
+.mode{padding:10px 5px;font-size:12px;text-align:center;border-radius:12px;box-shadow:0 2px 8px rgba(30,48,75,.045);border:1px solid var(--line);background:var(--surface);color:var(--text)}
+.mode small{display:block;font-size:10px;color:var(--muted);font-weight:500;margin-top:2px}
+.mode.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.mode.active small{color:var(--accent)}
+.mode-note{padding:11px 12px;border-radius:11px;box-shadow:none;border:1px solid var(--line);font-size:12px;color:var(--muted)}
+.priority-list{display:grid;gap:13px;margin-top:14px}
+.priority{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:650}
+.priority .index{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;box-shadow:none;border:1px solid var(--line);font-size:10px;color:var(--accent);flex-shrink:0}
+.priority .kind{margin-left:auto;font-size:10px;color:var(--muted);font-weight:500}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:27px 2px 13px}
+.section-head h2{font-size:20px;letter-spacing:-.045em;margin:0}
+.section-head p{font-size:12px;color:var(--muted);margin:3px 0 0}
+.tasks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.task{padding:17px;border-radius:16px;box-shadow:none;border:1px solid var(--line);min-width:0}
+.task.wide{grid-column:1/-1}
+.task-head{display:flex;align-items:flex-start;gap:10px;margin-bottom:13px}
+.task-mark{width:30px;height:30px;flex-shrink:0;border-radius:10px;box-shadow:none;border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);font-size:11px;font-weight:800}
+.task-title{font-size:14px;font-weight:750;line-height:1.3;margin:1px 0 3px}
+.task-desc{font-size:11px;color:var(--muted);line-height:1.45}
+.duration{margin-left:auto;white-space:nowrap;font-size:10px;color:var(--muted);padding-top:3px}
+.checklist{display:grid;gap:8px}
+.checkrow{display:flex;align-items:flex-start;gap:9px;padding:10px 11px;border-radius:11px;box-shadow:none;border:1px solid var(--line);cursor:pointer;min-width:0}
+.checkrow input,.habit input{appearance:none;-webkit-appearance:none;width:16px;height:16px;border:1.5px solid var(--muted);border-radius:5px;margin:2px 0 0;flex-shrink:0;position:relative;cursor:pointer;background:transparent}
+.checkrow input:checked,.habit input:checked{background:var(--accent);border-color:var(--accent)}
+.checkrow input:checked:after,.habit input:checked:after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid white;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.checktext{font-size:12px;line-height:1.4;min-width:0}
+.detail{display:block;font-size:10px;line-height:1.45;color:var(--muted);margin-top:3px}
+.checkrow:has(input:checked){background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 35%,var(--line));box-shadow:none}\n.checkrow:has(input:checked) .checktext{color:var(--text);text-decoration:none}\n.checkrow:has(input:checked) .detail{color:var(--muted)}
+.habits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.habit{display:flex;gap:9px;align-items:flex-start;padding:11px;border-radius:11px;box-shadow:none;border:1px solid var(--line);font-size:12px;cursor:pointer}
+.habit small{display:block;font-size:10px;color:var(--muted);line-height:1.4;margin-top:3px}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:17px}
+.rule{padding:12px 13px;border-radius:11px;box-shadow:none;border:1px solid var(--line);margin-top:9px}
+.rule strong{display:block;font-size:12px}.rule p{font-size:11px;color:var(--muted);margin:4px 0 0;line-height:1.5}
+.field{margin-top:12px}.field label{display:block;color:var(--muted);font-size:11px;font-weight:650;margin-bottom:6px}
+textarea{display:block;width:100%;min-height:65px;resize:vertical;border:0;border-radius:11px;box-shadow:none;border:1px solid var(--line);background:transparent;color:var(--text);padding:11px;font-size:12px}
+footer{text-align:center;font-size:10px;color:var(--muted);margin-top:22px;line-height:1.5}
+.toast{position:fixed;left:50%;bottom:18px;transform:translate(-50%,12px);opacity:0;pointer-events:none;padding:10px 15px;background:var(--text);color:var(--bg);font-size:12px;border-radius:10px;transition:.2s;z-index:5}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+input[type=file]{display:none}
+@media(max-width:700px){
+ .app{padding:17px 14px 30px}
+ header{align-items:flex-start;margin-bottom:18px}
+ h1{font-size:22px}
+ .actions{gap:7px}
+ .actions button,.actions .button{padding:9px 10px;font-size:11px}
+ .hero{grid-template-columns:1fr;padding:20px;gap:16px;border-radius:18px}
+ .hero h2{font-size:26px}
+ .progress-card{display:grid;grid-template-columns:1fr auto;align-items:center;gap:0 12px;padding:12px 14px}
+ .progress-label{grid-column:1}.progress-numbers{grid-column:2;grid-row:1/3;margin:0}
+ .track{grid-column:1}.progress-copy{grid-column:1/3;margin-top:7px}
+ .overview{grid-template-columns:1fr;gap:14px}
+ .panel{padding:16px}
+ .section-head{margin-top:24px;align-items:flex-start}
+ .section-head h2{font-size:19px}
+ .tasks{grid-template-columns:1fr;gap:12px}
+ .task,.task.wide{grid-column:auto;padding:16px}
+ .habits{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .bottom-grid{grid-template-columns:1fr;gap:12px}
+}
+@media(max-width:390px){
+ .app{padding:14px 10px 26px}
+ header{gap:8px}
+ .kicker{font-size:9px}
+ h1{font-size:20px}
+ .actions{gap:6px}
+ .actions button,.actions .button{padding:8px;font-size:10px}
+ .hero{padding:17px}
+ .hero h2{font-size:23px}
+ .modes{gap:7px}
+ .mode{font-size:11px;padding:9px 3px}
+ .mode small{font-size:9px}
+ .habits{grid-template-columns:1fr}
+ .priority .kind{font-size:9px}
+}
+</style>
+
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Balance Plan">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+</head>
+<body>
+<main class="app">
+<header>
+ <div class="brand"><div class="kicker">Personal operating system</div><h1>My Balance Plan</h1></div>
+ <div class="actions">
+  <button id="themeBtn" type="button" aria-label="Toggle theme">Dark</button>
+  <button id="exportBtn" type="button">Backup</button>
+  <label class="button" for="importFile">Restore</label><input id="importFile" type="file" accept="application/json">
+ </div>
+</header>
+
+<section class="hero">
+ <div>
+  <div class="kicker" id="dateLabel">YOUR PLAN FOR TODAY</div>
+  <h2>Build a life you’re proud of.<br>One day at a time.</h2>
+  <p>Get job-ready while making room for college, writing, health, and the things you enjoy. This is a guide, not a test.</p>
+ </div>
+ <div class="progress-card">
+  <div class="progress-label">Today's progress</div>
+  <div class="progress-numbers"><b id="doneCount">0</b> <span>/ <span id="totalCount">0</span></span></div>
+  <div class="track"><span id="progressBar"></span></div>
+  <div class="progress-copy" id="progressText">Start with one task.</div>
+ </div>
+</section>
+
+<div class="overview">
+ <section class="panel">
+  <h3 class="panel-title">Choose your day mode</h3>
+  <p class="panel-desc">Same priorities. Adjusted to the day you have.</p>
+  <div class="modes">
+   <button class="mode active" data-mode="normal">Normal<small>Full plan</small></button>
+   <button class="mode" data-mode="busy">Busy<small>Reduced</small></button>
+   <button class="mode" data-mode="survival">Survival<small>Minimum</small></button>
+  </div>
+  <div class="mode-note" id="modeNote">Standard plan: 2 hours job prep, 45 minutes college, and 1 hour writing.</div>
+ </section>
+ <section class="panel">
+  <h3 class="panel-title">Priority order</h3>
+  <p class="panel-desc">Where your best time goes first.</p>
+  <div class="priority-list">
+   <div class="priority"><span class="index">01</span>Job preparation<span class="kind">Career</span></div>
+   <div class="priority"><span class="index">02</span>College<span class="kind">Study</span></div>
+   <div class="priority"><span class="index">03</span>Writing<span class="kind">Craft</span></div>
+   <div class="priority"><span class="index">04</span>Gaming<span class="kind">Leisure</span></div>
+   <div class="priority"><span class="index">05</span>Editing<span class="kind">Inspiration</span></div>
+  </div>
+ </section>
+</div>
+
+<div class="section-head"><div><h2>Today's checklist</h2><p id="weekdayLabel">Your schedule updates by day.</p></div><button id="resetBtn" type="button">Reset checks</button></div>
+<div class="tasks" id="tasksGrid"></div>
+
+<div class="bottom-grid">
+ <section class="panel">
+  <h3 class="panel-title">Keep life balanced</h3>
+  <p class="panel-desc">Improvement matters, but so does recovery.</p>
+  <div class="rule"><strong>Gaming and entertainment</strong><p>Enjoy longer sessions after your priorities. Short breaks and basic relaxation do not need to be earned.</p></div>
+  <div class="rule"><strong>Editing</strong><p>Edit when a strong idea arrives. If now is not the time, capture it for later.</p></div>
+  <div class="rule"><strong>Learning and reading</strong><p>When it suits you, replace brainrot videos or doom-scrolling with one useful idea or a few pages.</p></div>
+  <div class="rule"><strong>Remember</strong><p>Do not fill every free moment with self-improvement. Rest is allowed.</p></div>
+ </section>
+ <section class="panel">
+  <h3 class="panel-title">Daily reflection</h3>
+  <p class="panel-desc">A quick check-in, without judging the day.</p>
+  <div class="field"><label for="winNote">One thing I did well</label><textarea id="winNote" placeholder="A task completed, a concept understood..."></textarea></div>
+  <div class="field"><label for="nextNote">One thing to make easier tomorrow</label><textarea id="nextNote" placeholder="Prepare materials, simplify a task..."></textarea></div>
+ </section>
+</div>
+<footer>Saved automatically in this browser · Export a backup to move your data to another device.<br>Progress across weeks matters more than a perfect day.</footer>
+</main>
+<div class="toast" id="toast" role="status"></div>
+<script>
+(function(){
+const $=s=>document.querySelector(s);
+const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const collegeByDay={
+ 1:['Python','Review Python concepts or college notes.'],
+ 2:['SEPM','Software Engineering and Project Management.'],
+ 3:['ADBMS','Advanced Database Management Systems.'],
+ 4:['DSA','Data Structures and Algorithms.'],
+ 5:['Business Statistics','Business Statistics (BS).'],
+ 6:['Cloud Computing','Cloud Computing.'],
+ 0:['Rest','Sunday is your default college rest day. Adjust for urgent deadlines.']
+};
+const jobByDay={
+ 1:['Python + AI/ML','Learn a concept, implement it, then practise independently.'],
+ 2:['Python + AI/ML','Learn a concept, implement it, then practise independently.'],
+ 3:['Python + AI/ML','Learn a concept, implement it, then practise independently.'],
+ 4:['Python DSA','Solve problems independently; review patterns and complexity.'],
+ 5:['Python DSA','Solve problems independently; review patterns and complexity.'],
+ 6:['Python DSA','Solve problems independently; review patterns and complexity.'],
+ 0:['Aptitude','Practise aptitude questions and review your mistakes.']
+};
+const modes={
+ normal:{note:'Standard plan: 2 hours job prep, 45 minutes college, and 1 hour writing.',times:{job:'2 hours',college:'45 min',writing:'1 hour'}},
+ busy:{note:'Busy day: aim for 60 minutes job prep, 25 minutes college, and 20 minutes writing.',times:{job:'60 min',college:'25 min',writing:'20 min'}},
+ survival:{note:'Keep the bar low. Try a tiny review if you can; if you are ill or exhausted, prioritise recovery.',times:{job:'15 min optional',college:'10 min optional',writing:'5 min optional'}}
+};
+let mode='normal',state={};
+function dateKey(){const p=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Kolkata',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const v={};p.forEach(x=>v[x.type]=x.value);return `${v.year}-${v.month}-${v.day}`}
+function currentDay(){return dayNames.indexOf(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Kolkata',weekday:'long'}).format(new Date()))}
+function load(){try{state=JSON.parse(localStorage.getItem('balancePlanData')||'{}')}catch(e){state={}}}
+function save(){localStorage.setItem('balancePlanData',JSON.stringify(state))}
+function ensureDay(){const k=dateKey();if(!state.days)state.days={};if(!state.days[k])state.days[k]={checks:{},mode:'normal',win:'',next:''};return state.days[k]}
+function taskCard(id,mark,title,desc,time,items,wide=false){return `<section class="task ${wide?'wide':''}"><div class="task-head"><div class="task-mark">${mark}</div><div><div class="task-title">${title}</div><div class="task-desc">${desc}</div></div><div class="duration">${time}</div></div><div class="checklist">${items.map(it=>`<label class="checkrow"><input type="checkbox" data-check="${id}.${it.id}"><span class="checktext">${it.label}${it.detail?`<span class="detail">${it.detail}</span>`:''}</span></label>`).join('')}</div></section>`}
+function habitCard(items){return `<section class="task wide"><div class="task-head"><div class="task-mark">H</div><div><div class="task-title">Health foundations</div><div class="task-desc">Support your energy; don't turn health into another source of pressure.</div></div></div><div class="habits">${items.map(it=>`<label class="habit"><input type="checkbox" data-check="health.${it.id}"><span>${it.label}<small>${it.detail||''}</small></span></label>`).join('')}</div></section>`}
+function render(){
+ const d=ensureDay(),day=currentDay(),job=jobByDay[day],college=collegeByDay[day];
+ $('#dateLabel').textContent=new Intl.DateTimeFormat('en-IN',{timeZone:'Asia/Kolkata',weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(new Date()).toUpperCase();
+ $('#weekdayLabel').textContent=`${dayNames[day]} · Job prep: ${job[0]} · College: ${college[0]}`;
+ mode=d.mode||'normal';document.querySelectorAll('.mode').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));$('#modeNote').textContent=modes[mode].note;
+ const jobNormal=[
+ {id:'revise',label:'Review previous learning',detail:'20 min: recall before checking notes.'},
+ {id:'learn',label:'Learn and implement a concept',detail:'60 min: actively practise, not just watch.'},
+ {id:'practice',label:'Independent practice',detail:'40 min: solve without looking at solutions.'}
+ ];
+ const jobItems=mode==='normal'?jobNormal:mode==='busy'?[{id:'revise',label:'Quick revision',detail:'Recall the key idea or solve a warm-up problem.'},{id:'practice',label:'Focused practice',detail:'Apply what you know in a short session.'}]:[{id:'revise',label:'Tiny review (optional)',detail:'15 minutes, or rest if you need it.'}];
+ const collegeItems=mode==='normal'?(day===0?[{id:'rest',label:'Rest day',detail:'No scheduled college study; adjust for urgent deadlines.'}]:[{id:'study',label:`Study ${college[0]}`,detail:college[1]},{id:'deadline',label:'Check deadlines',detail:'Adjust the default plan for upcoming exams or assignments.'}]):mode==='busy'?[{id:'study',label:`Focused ${college[0]} review`,detail:'Cover one key concept or urgent task.'}]:[{id:'study',label:'Tiny review (optional)',detail:'10 minutes, or rest if you need it.'}];
+ const writingItems=mode==='normal'?[
+ {id:'project',label:'Continue an ongoing project',detail:'If a story is active, work on it first.'},
+ {id:'short',label:'No active project? Choose the next story',detail:'Last story short → start a long story; last story long → start a short story.'},
+ {id:'craft',label:'Write, revise, or develop a scene',detail:'Drafting, dialogue, characters, plot, and revision all count.'}
+ ]:mode==='busy'?[{id:'project',label:'One small step on your project',detail:'A scene, a revision, or a useful next step.'}]:[{id:'project',label:'Capture an idea (optional)',detail:'A sentence, scene idea, or note is enough.'}];
+ let html='';
+ html+=taskCard('job','01',`Job preparation · ${job[0]}`,job[1],modes[mode].times.job,jobItems);
+ html+=taskCard('college','02',`College · ${college[0]}`,college[1],modes[mode].times.college,collegeItems);
+ html+=taskCard('writing','03','Writing','Protect the time; keep the work flexible.',modes[mode].times.writing,writingItems);
+ html+=taskCard('leisure','04','Gaming and entertainment','Enjoyment is part of a balanced life.','Free time',[
+ {id:'game',label:'Gaming after primary tasks',detail:'A reward option, not a requirement.'},
+ {id:'watch',label:'Watch something if tasks are done',detail:'Weekends and vacations are the default; weekdays are flexible.'}
+ ]);
+ html+=taskCard('creative','05','Editing and inspiration','No daily quota. Follow a genuine idea.','Idea time',[
+ {id:'edit',label:'Edit if inspiration strikes',detail:'Capture the idea if you cannot work on it now.'}
+ ]);
+ html+=habitCard([
+ {id:'sleep',label:'Sleep on time',detail:'Aim to be in bed before 1 AM and get enough total sleep.'},
+ {id:'water',label:'Drink enough water',detail:'Aim for at least 2 L, adjusting for your needs and weather.'},
+ {id:'warmup',label:'Warm-up and stretching',detail:'Prepare your body before training.'},
+ {id:'pushups',label:'Push-ups',detail:'Manageable sets; not maximum effort every day.'},
+ {id:'squats',label:'40 squats',detail:'Use good form and scale if needed.'},
+ {id:'pullups',label:'Pull-ups',detail:'Manageable sets; allow time to recover.'}
+ ]);
+ html+=taskCard('growth','06','Learning and reading','Optional alternatives to scrolling.','When it fits',[
+ {id:'learn',label:'Learn one useful thing',detail:'A concept, skill, or explanation.'},
+ {id:'read',label:'Read instead of doom-scrolling',detail:'A few pages count.'},
+ {id:'recover',label:'Take a real break',detail:'Rest without guilt; empty time is allowed.'}
+ ]);
+ $('#tasksGrid').innerHTML=html;
+ $('#tasksGrid').querySelectorAll('[data-check]').forEach(inp=>{inp.checked=!!d.checks[inp.dataset.check];inp.addEventListener('change',()=>{d.checks[inp.dataset.check]=inp.checked;save();updateProgress()})});
+ $('#winNote').value=d.win||'';$('#nextNote').value=d.next||'';
+ $('#winNote').oninput=()=>{d.win=$('#winNote').value;save()};$('#nextNote').oninput=()=>{d.next=$('#nextNote').value;save()};
+ updateProgress();
+}
+function updateProgress(){const inputs=[...document.querySelectorAll('[data-check]')],done=inputs.filter(i=>i.checked).length,pct=inputs.length?Math.round(done/inputs.length*100):0;$('#doneCount').textContent=done;$('#totalCount').textContent=inputs.length;$('#progressBar').style.width=pct+'%';$('#progressText').textContent=pct===100?'Checklist complete. Make room to rest.':pct===0?'Start with one task.':`${pct}% complete · Progress, not perfection.`}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2100)}
+function applyTheme(){document.documentElement.dataset.theme=state.theme||'light';$('#themeBtn').textContent=state.theme==='dark'?'Light':'Dark'}
+document.querySelectorAll('.mode').forEach(b=>b.addEventListener('click',()=>{mode=b.dataset.mode;ensureDay().mode=mode;save();render();toast(`${mode[0].toUpperCase()+mode.slice(1)} mode selected`)}));
+$('#resetBtn').addEventListener('click',()=>{if(confirm('Reset today’s checks? Your reflection notes will be kept.')){ensureDay().checks={};save();render();toast('Checks reset')}});
+$('#themeBtn').addEventListener('click',()=>{state.theme=state.theme==='dark'?'light':'dark';save();applyTheme()});
+$('#exportBtn').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=`balance-plan-backup-${dateKey()}.json`;a.click();URL.revokeObjectURL(url);toast('Backup downloaded')});
+$('#importFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{const incoming=JSON.parse(await file.text());if(!incoming||typeof incoming!=='object'||!incoming.days)throw new Error();if(!confirm('Restore this backup? It will replace data currently saved in this browser.'))return;state=incoming;save();applyTheme();render();toast('Backup restored')}catch(err){alert('Could not restore this file. Please select a valid Balance Plan JSON backup.')}finally{e.target.value=''}});
+load();applyTheme();ensureDay();render();
+})();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(err => {
+      console.error('Service worker registration failed:', err);
+    });
+  });
+}
+
+</script>
+</body>
+</html>
